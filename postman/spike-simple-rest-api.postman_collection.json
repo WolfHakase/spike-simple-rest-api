@@ -49,6 +49,34 @@
 			"response": []
 		},
 		{
+			"name": "getItems with filter",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:8000/items/?filter=first",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"items",
+						""
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "first"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "getItem",
 			"request": {
 				"method": "GET",
@@ -171,7 +199,7 @@
 		{
 			"name": "updateItem",
 			"request": {
-				"method": "POST",
+				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
