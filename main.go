@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -55,7 +56,7 @@ func main() {
 	itemRoutes.HandleFunc("/{id}", deleteItem).Methods(http.MethodDelete, http.MethodOptions)
 	itemRoutes.HandleFunc("/{id}", updateItem).Methods(http.MethodPut, http.MethodOptions)
 	itemRoutes.HandleFunc("/", createItem).Methods(http.MethodPost, http.MethodOptions)
-	itemRoutes.HandleFunc("/", listItems).Methods(http.MethodGet, http.MethodOptions)
+	itemRoutes.HandleFunc("/", listItems).Queries("filter", "{filter}").Methods(http.MethodGet, http.MethodOptions)
 	itemRoutes.HandleFunc("/", routeDoesNotExist)
 	r.Use(loggingMiddleware)
 	r.Use(mux.CORSMethodMiddleware(r))
@@ -93,7 +94,24 @@ func ping(w http.ResponseWriter, r *http.Request) {
 }
 
 func listItems(w http.ResponseWriter, r *http.Request) {
-	SuccessResponse(w, itemRepository)
+	var filter string
+	vars := mux.Vars(r)
+	if val, ok := vars["filter"]; ok {
+		filter = val
+	}
+
+	if len(filter) == 0 {
+		SuccessResponse(w, itemRepository)
+		return
+	}
+	var result []Item
+	for _, item := range itemRepository {
+		if strings.Contains(item.Name, filter) {
+			result = append(result, item)
+		}
+	}
+
+	SuccessResponse(w, result)
 }
 
 func getItem(w http.ResponseWriter, r *http.Request) {
